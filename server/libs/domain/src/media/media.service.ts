@@ -36,8 +36,9 @@ export class MediaService {
     }
   }
 
-  async handleGenerateJpegThumbnail(data: IAssetJob): Promise<void> {
+  async handleGenerateJpegThumbnail(data: IAssetJob, daisyChain: boolean, fileName: string): Promise<void> {
     const { asset } = data;
+    const fn = fileName;
 
     try {
       const resizePath = this.storageCore.getFolderLocation(StorageFolder.THUMBNAILS, asset.ownerId);
@@ -65,7 +66,12 @@ export class MediaService {
 
       asset.resizePath = jpegThumbnailPath;
 
-      await this.jobRepository.queue({ name: JobName.GENERATE_WEBP_THUMBNAIL, data: { asset } });
+      if (daisyChain) {
+        await this.jobRepository.queue({ name: JobName.GENERATE_WEBP_THUMBNAIL_DC, data: { asset: asset, fileName: fn } });
+      }
+      else {
+        await this.jobRepository.queue({ name: JobName.GENERATE_WEBP_THUMBNAIL, data: { asset } });
+      }
       await this.jobRepository.queue({ name: JobName.CLASSIFY_IMAGE, data: { asset } });
       await this.jobRepository.queue({ name: JobName.DETECT_OBJECTS, data: { asset } });
       await this.jobRepository.queue({ name: JobName.ENCODE_CLIP, data: { asset } });
@@ -76,8 +82,9 @@ export class MediaService {
     }
   }
 
-  async handleGenerateWepbThumbnail(data: IAssetJob): Promise<void> {
+  async handleGenerateWepbThumbnail(data: IAssetJob, daisyChain: boolean, fileName: string): Promise<void> {
     const { asset } = data;
+    const fn = fileName;
 
     if (!asset.resizePath) {
       return;
@@ -88,6 +95,15 @@ export class MediaService {
     try {
       await this.mediaRepository.resize(asset.resizePath, webpPath, { size: 250, format: 'webp' });
       await this.assetRepository.save({ id: asset.id, webpPath: webpPath });
+      if (daisyChain)
+      {
+        if (asset.type == AssetType.VIDEO){
+          this.jobRepository.queue({ name: JobName.VIDEO_CONVERSION_DC, data: { asset: asset, fileName: fn } });
+        }
+        else{
+          this.jobRepository.queue({ name: JobName.EXIF_EXTRACTION, data: { asset: asset, fileName: fn } });
+        }
+      }
     } catch (error: any) {
       this.logger.error('Failed to generate webp thumbnail for asset: ' + asset.id, error.stack);
     }
