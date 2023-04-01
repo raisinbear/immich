@@ -59,6 +59,22 @@ export class VideoTranscodeProcessor {
     await this.runVideoEncode(asset, savedEncodedPath);
   }
 
+  @Process({ name: JobName.VIDEO_CONVERSION_DC, concurrency: 2 })
+  async handleVideoConversion_dc(job: Job<IAssetJob>) {
+    const { asset } = job.data;
+    const fn = job.data.fileName;
+
+    const encodedVideoPath = this.storageCore.getFolderLocation(StorageFolder.ENCODED_VIDEO, asset.ownerId);
+
+    this.storageRepository.mkdirSync(encodedVideoPath);
+
+    const savedEncodedPath = join(encodedVideoPath, `${asset.id}.mp4`);
+
+    await this.runVideoEncode(asset, savedEncodedPath);
+
+    await this.jobRepository.queue({ name: JobName.EXTRACT_VIDEO_METADATA, data: { asset: asset, fileName: fn } });
+  }
+
   async runFFProbePipeline(asset: AssetEntity): Promise<FfprobeData> {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(asset.originalPath, (err, data) => {

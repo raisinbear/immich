@@ -87,7 +87,9 @@ export class JobRepository implements IJobRepository {
 
       case JobName.QUEUE_GENERATE_THUMBNAILS:
       case JobName.GENERATE_JPEG_THUMBNAIL:
+      case JobName.GENERATE_JPEG_THUMBNAIL_DC:
       case JobName.GENERATE_WEBP_THUMBNAIL:
+      case JobName.GENERATE_WEBP_THUMBNAIL_DC:
         await this.generateThumbnail.add(item.name, item.data);
         break;
 
@@ -109,6 +111,7 @@ export class JobRepository implements IJobRepository {
 
       case JobName.QUEUE_VIDEO_CONVERSION:
       case JobName.VIDEO_CONVERSION:
+      case JobName.VIDEO_CONVERSION_DC:
         await this.videoTranscode.add(item.name, item.data);
         break;
 

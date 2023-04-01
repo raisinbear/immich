@@ -15,14 +15,7 @@ export class AssetService {
   }
 
   async handleAssetUpload(data: IAssetUploadedJob) {
-    await this.jobRepository.queue({ name: JobName.GENERATE_JPEG_THUMBNAIL, data });
-
-    if (data.asset.type == AssetType.VIDEO) {
-      await this.jobRepository.queue({ name: JobName.VIDEO_CONVERSION, data });
-      await this.jobRepository.queue({ name: JobName.EXTRACT_VIDEO_METADATA, data });
-    } else {
-      await this.jobRepository.queue({ name: JobName.EXIF_EXTRACTION, data });
-    }
+    await this.jobRepository.queue({ name: JobName.GENERATE_JPEG_THUMBNAIL_DC, data });
   }
 
   save(asset: Partial<AssetEntity>) {

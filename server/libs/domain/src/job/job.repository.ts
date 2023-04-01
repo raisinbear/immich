@@ -24,11 +24,14 @@ export type JobItem =
   // Transcoding
   | { name: JobName.QUEUE_VIDEO_CONVERSION; data: IBaseJob }
   | { name: JobName.VIDEO_CONVERSION; data: IAssetJob }
+  | { name: JobName.VIDEO_CONVERSION_DC; data: IAssetJob }
 
   // Thumbnails
   | { name: JobName.QUEUE_GENERATE_THUMBNAILS; data: IBaseJob }
   | { name: JobName.GENERATE_JPEG_THUMBNAIL; data: IAssetJob }
+  | { name: JobName.GENERATE_JPEG_THUMBNAIL_DC; data: IAssetJob }
   | { name: JobName.GENERATE_WEBP_THUMBNAIL; data: IAssetJob }
+  | { name: JobName.GENERATE_WEBP_THUMBNAIL_DC; data: IAssetJob }
 
   // User Deletion
   | { name: JobName.USER_DELETE_CHECK }

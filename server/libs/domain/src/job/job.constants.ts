@@ -23,11 +23,14 @@ export enum JobName {
   // conversion
   QUEUE_VIDEO_CONVERSION = 'queue-video-conversion',
   VIDEO_CONVERSION = 'video-conversion',
+  VIDEO_CONVERSION_DC = 'video-conversion-dc',
 
   // thumbnails
   QUEUE_GENERATE_THUMBNAILS = 'queue-generate-thumbnails',
   GENERATE_JPEG_THUMBNAIL = 'generate-jpeg-thumbnail',
+  GENERATE_JPEG_THUMBNAIL_DC = 'generate-jpeg-thumbnail-dc',
   GENERATE_WEBP_THUMBNAIL = 'generate-webp-thumbnail',
+  GENERATE_WEBP_THUMBNAIL_DC = 'generate-webp-thumbnail-dc',
 
   // metadata
   QUEUE_METADATA_EXTRACTION = 'queue-metadata-extraction',
